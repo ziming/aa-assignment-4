@@ -20,6 +20,12 @@ public class Problem1Main {
         // start with fish0.dat first
         try (Stream<String> lines = Files.lines(Paths.get("fish0.dat"))) {
 
+            /*
+             * Strategy for (a)
+             * For each line,
+             * get the buyerID and Number of fish traded
+             * add to the number of purchases for that buyer in a hashmap
+             */
 
         } catch (IOException e) {
 
