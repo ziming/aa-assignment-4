@@ -7,6 +7,10 @@ gen
 # Java template
 *.class
 
+# Data files
+*.dat
+*.txt
+
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
