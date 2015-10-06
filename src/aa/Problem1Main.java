@@ -40,6 +40,8 @@ public class Problem1Main {
             9,1,33,sting ray,4991,20
          */
 
+        // API docs: https://docs.oracle.com/javase/8/docs/api/
+
         Map<String, AtomicInteger> buyerPurchases = new HashMap<>();
 
         // v1 of number of purchases by each buyer.
