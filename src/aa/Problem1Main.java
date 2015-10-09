@@ -97,7 +97,7 @@ public class Problem1Main {
 
         Stream<String> lines = null;
 
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 10; i++) {
 
             Stream<String> currentFileLines = Files.lines(Paths.get(String.format("fish%d.dat", i)));
 
