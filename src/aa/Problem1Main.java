@@ -57,7 +57,9 @@ public class Problem1Main {
 
 
         System.out.println("=== a. The number of purchases by each buyer. ===");
-        buyerNoOfPurchasesMap.forEach((key, value) -> System.out.println(key + " has made " + value + " trades (purchases)"));
+        buyerNoOfPurchasesMap.forEach(
+                (key, value) -> System.out.println(key + " has made " + value + " trades (purchases)")
+        );
 
         // just to leave a blank line
         System.out.println();
@@ -77,7 +79,9 @@ public class Problem1Main {
                 );
 
         System.out.println("=== b. The average price per fish ===");
-        fishAvgPriceMap.forEach((key, value) -> System.out.println("Fish: " + key + " and its Average Price is " + value));
+        fishAvgPriceMap.forEach(
+                (key, value) -> System.out.println("Fish: " + key + " and its Average Price is " + value)
+        );
 
         System.out.println();
 
