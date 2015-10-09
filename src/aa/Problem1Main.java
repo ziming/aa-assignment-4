@@ -3,9 +3,8 @@ package aa;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Problem1Main {
@@ -14,12 +13,12 @@ public class Problem1Main {
     private static final int BUYER_ID = 1;
     private static final int SELLER_ID = 2;
     private static final int FISH_TYPE = 3;
-    private static final int PRICE = 4;
+    private static final int FISH_PRICE = 4;
     private static final int NUMBER_OF_FISH_TRADED = 5;
 
     public static void main (String[] args) throws IOException {
 
-        // TradeID, BuyerID, SellerID, Fish Type, Price, Number of Fish traded
+        // CSV Format according to assignment 4 is: TradeID, BuyerID, SellerID, Fish Type, Price, Number of Fish traded
 
         /*
          * a. The number of purchases by each buyer.
@@ -28,6 +27,7 @@ public class Problem1Main {
          */
 
         /*
+            TradeID, BuyerID, SellerID, Fish Type, Price, Number of Fish traded
             0,20,16,sting ray,206,23
             1,49,46,mackerel,9242,99
             2,8,26,shrimp,476,71
@@ -42,57 +42,70 @@ public class Problem1Main {
 
         // API docs: https://docs.oracle.com/javase/8/docs/api/
 
-        Map<String, AtomicInteger> buyerPurchases = new HashMap<>();
+        // Get combined stream from fish0.dat to fish9.dat
+        Stream<String> lines = getCombinedStream();
 
-        // v1 of number of purchases by each buyer.
-        for (int i = 0; i < 10; i++) {
+        // a. The number of purchases by each buyer.
+        // assumption: purchases is number of trades (transactions) not number of fish traded.
+        Map<String, Long> buyerNoOfPurchasesMap = lines
+                .map(line -> line.split(","))
+                .collect(
+                        Collectors.groupingBy(
+                                line -> line[BUYER_ID],
+                                Collectors.counting()
+                        ));
 
-            Stream<String> lines = Files.lines(Paths.get(String.format("fish%d.dat", i)));
 
-            lines.forEach(line -> {
-                String[] row = line.split(",");
-                int rowfishesTraded = Integer.parseInt(row[NUMBER_OF_FISH_TRADED]);
+        System.out.println("=== a. The number of purchases by each buyer. ===");
+        buyerNoOfPurchasesMap.forEach((key, value) -> System.out.println(key + " has made " + value + " trades (purchases)"));
 
-                AtomicInteger buyerFishesTradedSum = buyerPurchases.get(row[BUYER_ID]);
+        // just to leave a blank line
+        System.out.println();
 
-                if (buyerFishesTradedSum == null) {
-                    buyerPurchases.put(row[BUYER_ID], new AtomicInteger(rowfishesTraded));
-                } else {
-                    buyerFishesTradedSum.getAndAdd(rowfishesTraded);
-                }
+        // b. The average price per fish
 
-            });
+        // streams can only be used once so we get it again. this will be repeated
+        lines = getCombinedStream();
+
+        Map<String, Double> fishAvgPriceMap = lines
+                .map(line -> line.split(","))
+                .collect(
+                        Collectors.groupingBy(
+                                line -> line[FISH_TYPE],
+                                Collectors.averagingDouble(line -> Double.parseDouble(line[FISH_PRICE]))
+                        )
+                );
+
+        System.out.println("=== b. The average price per fish ===");
+        fishAvgPriceMap.forEach((key, value) -> System.out.println("Fish: " + key + " and its Average Price is " + value));
+
+        System.out.println();
+
+        // c. The average quantity per fish.
+        lines = getCombinedStream();
+
+        Map<String, Double> fishAvgQuantityMap;
+
+
+    }
+
+    public static Stream<String> getCombinedStream() throws IOException {
+
+        Stream<String> lines = null;
+
+        for (int i = 0; i < 1; i++) {
+
+            Stream<String> currentFileLines = Files.lines(Paths.get(String.format("fish%d.dat", i)));
+
+            if (lines != null) {
+                lines = Stream.concat(lines, currentFileLines);
+            } else {
+                lines = currentFileLines;
+            }
+
         }
 
-        buyerPurchases.forEach((key, value) -> System.out.println(key + " bought " + value.get() + " fishes"));
-
-        // average prices per fish. v1
-        Map<String, double[]> fishPricesMap = new HashMap<>();
-
-        for (int i = 0; i < 10; i++) {
-
-            Stream<String> lines = Files.lines(Paths.get(String.format("fish%d.dat", i)));
-
-            lines.forEach(line -> {
-                String[] row = line.split(",");
-
-                double rowFishPrice = Double.parseDouble(row[PRICE]);
-                double rowfishesTraded= Double.parseDouble(row[NUMBER_OF_FISH_TRADED]);
-
-                double[] fishPriceStat = fishPricesMap.get(row[FISH_TYPE]);
-
-                if (fishPriceStat == null) {
-                    fishPricesMap.put(row[BUYER_ID], new double[] {rowFishPrice, rowfishesTraded});
-                } else {
-                    fishPriceStat[0] += rowFishPrice;
-                    fishPriceStat[1] += rowfishesTraded;
-                }
-
-            });
-        }
-
-        // to calculate and print average
-
+        return lines;
     }
 
 }
