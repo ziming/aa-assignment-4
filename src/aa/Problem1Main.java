@@ -87,8 +87,19 @@ public class Problem1Main {
 
         // c. The average quantity per fish.
         lines = getCombinedStream();
+        Map<String, Double> avgQtyPerFishMap = lines
+                .map(line -> line.split(","))
+                .collect(
+                        Collectors.groupingBy(
+                                line -> line[FISH_TYPE],
+                                Collectors.averagingDouble(line -> Double.parseDouble(line[NUMBER_OF_FISH_TRADED]))
+                        )
+                );
 
-        Map<String, Double> fishAvgQuantityMap;
+        System.out.println("=== c. The average quantity per fish ===");
+        avgQtyPerFishMap.forEach(
+                (key, value) -> System.out.println("Fish: " + key + " and its Average Quantity is " + value)
+        );
 
 
     }
