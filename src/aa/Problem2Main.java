@@ -4,7 +4,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -43,6 +44,11 @@ public class Problem2Main {
          L       http://voices.washingtonpost.com/thefix/2008/09/bristol_palin_is_pregnant.html?hpid=topnews
          */
 
+        // first let's analyse the data print first 250 lines maybe to get a sense of the format?
+//        getLines("quotes_2009-04.txt")
+//                .limit(250)
+//                .forEach(System.out::println);
+
         /*
          a. How many occurrences are there of each of the following words in the quote lines (those that start with “Q”)?
          - “lipstick”
@@ -50,15 +56,45 @@ public class Problem2Main {
          - “boesch”
          - “antithesis”
          */
-        Stream<String> lines = getLines();
+//        StopWatch stopWatch = new StopWatch();
+//        stopWatch.start();
+        Stream<String> quoteLines = getLines("quotes_2009-04.txt");
 
-        List<String> phraseList = lines
+        Map<String, Long> wordFrequencyMap = quoteLines
                 .filter(line -> line.startsWith("Q") && line.matches(".*\\b(lipstick|steppe |boesch|antithesis)\\b.*"))
-                .collect(Collectors.toList());
+                .map(line -> line.split("\\s+"))
+                .collect(
+                        Collectors.groupingBy(
+                                line -> {
 
-        phraseList.forEach(System.out::println);
+                                    for (String word : line) {
+
+                                        switch (word) {
+                                            case "lipstick":
+                                                return "lipstick";
+                                            case "steppe ":
+                                                return "steppe ";
+                                            case "boesch":
+                                                return "boesch";
+                                            case "antithesis":
+                                                return "antithesis";
+                                        }
+                                    }
+                                    return "default";
+
+                                },
+                            Collectors.counting()
+                        )
+                );
 
         System.out.println();
+
+//        long timeTakenForPartA = stopWatch.stop();
+
+        // question didn't ask for time measurement, this is purely for curosity
+        // no parallel: 214791
+        // parallel is  64334
+//        System.out.println("Time taken for part a: (ms)" + timeTakenForPartA);
 
         /*
          b. In eLearn, there is a file called y.txt. Download this file and write a stream-based program that can
@@ -66,17 +102,33 @@ public class Problem2Main {
             already listed in the y.txt file.
          */
 
+        quoteLines = getLines("quotes_2009-04.txt");
+
+        // y.txt is pretty small only 13841 entries, might as well get it in memory for frequent re-use.
+
+        Set<String> yWordsSet = getLines("y.txt").collect(Collectors.toSet());
+
+        Set<String> wordsNotInYTxt = quoteLines
+                .filter(line -> line.startsWith("Q"))
+                .map(line -> line.split("\\s+"))
+                .flatMap(Arrays::stream)
+                .filter(word -> word.startsWith("y") && !yWordsSet.contains(word))
+                .collect(Collectors.toSet());
+
+        System.out.println("Words starting with “y” appear in the quote lines of the 10GB unzipped file which are not already listed in the y.txt file. are");
+        wordsNotInYTxt.forEach(System.out::println);
+
+        System.out.println();
 
 
         /*
          c. How many unique words are in the quote lines of the 10GB unzipped file?
          */
 
-        lines = getLines();
+        quoteLines = getLines("quotes_2009-04.txt");
 
-        long uniqueWordsCount = lines
+        long uniqueWordsCount = quoteLines
                 .filter(line -> line.startsWith("Q"))
-                .map(String::toLowerCase)
                 .map(line -> line.split("\\s+"))
                 .flatMap(Arrays::stream)
                 .distinct()
@@ -88,8 +140,8 @@ public class Problem2Main {
 
     }
 
-    private static Stream<String> getLines() throws IOException {
-        return Files.lines(Paths.get("quotes_2009-04.txt"));
+    private static Stream<String> getLines(String fileName) throws IOException {
+        return Files.lines(Paths.get(fileName));
     }
 
 }
