@@ -3,13 +3,33 @@ package aa;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Problem2Main {
 
+    private static int DOCUMENT_URL = 0;
+    private static int POST_TIMESTAMP = 1;
+
+    // Note some documents have zero phrases or zero links.
+    private static int PHRASE_1 = 2;
+    private static int PHRASE_2 = 3;
+    private static int PHRASE_3 = 4;
+    private static int PHRASE_4 = 5;
+
+    // note some documents have 0 phrases or 0 links
+    private static int HYPERLINK_1 = 6;
+    private static int HYPER_LINK_2 = 7;
+    private static int HYPERLINK_3 = 8;
+
     public static void main (String[] args) throws IOException {
 
         /*
+
+         https://snap.stanford.edu/data/memetracker9.html
+
          Data Format:
 
          P       http://blogs.abcnews.com/politicalpunch/2008/09/obama-says-mc-1.html
@@ -30,6 +50,15 @@ public class Problem2Main {
          - “boesch”
          - “antithesis”
          */
+        Stream<String> lines = getLines();
+
+        List<String> phraseList = lines
+                .filter(line -> line.startsWith("Q") && line.matches(".*\\b(lipstick|steppe |boesch|antithesis)\\b.*"))
+                .collect(Collectors.toList());
+
+        phraseList.forEach(System.out::println);
+
+        System.out.println();
 
         /*
          b. In eLearn, there is a file called y.txt. Download this file and write a stream-based program that can
@@ -37,19 +66,29 @@ public class Problem2Main {
             already listed in the y.txt file.
          */
 
+
+
         /*
          c. How many unique words are in the quote lines of the 10GB unzipped file?
          */
 
+        lines = getLines();
 
-        Stream<String> lines = getLines();
+        long uniqueWordsCount = lines
+                .filter(line -> line.startsWith("Q"))
+                .map(String::toLowerCase)
+                .map(line -> line.split("\\s+"))
+                .flatMap(Arrays::stream)
+                .distinct()
+                .count();
 
+        System.out.println("Total number of unique words are: " + uniqueWordsCount);
 
 
 
     }
 
-    public static Stream<String> getLines() throws IOException {
+    private static Stream<String> getLines() throws IOException {
         return Files.lines(Paths.get("quotes_2009-04.txt"));
     }
 
