@@ -55,7 +55,8 @@ public class Problem1Main {
 
         long totalTimeTaken = stopWatch.stop();
 
-        // non parallel is about 19102
+        // non parallel stream is about 19102 ms
+        // parallel stream is about 9657
         System.out.println("Total Time Taken (ms): " + totalTimeTaken);
 
     }
