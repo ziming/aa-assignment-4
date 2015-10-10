@@ -45,9 +45,11 @@ public class Problem2Main {
          */
 
         // first let's analyse the data print first 250 lines maybe to get a sense of the format?
-//        getLines("quotes_2009-04.txt")
-//                .limit(250)
+//        Stream<String> quoteLines = getLines("quotes_2009-04.txt");
+//        quoteLines
+//                .filter(line -> line.contains("steppe "))
 //                .forEach(System.out::println);
+//        quoteLines.close();
 
         /*
          a. How many occurrences are there of each of the following words in the quote lines (those that start with “Q”)?
@@ -59,9 +61,10 @@ public class Problem2Main {
 //        StopWatch stopWatch = new StopWatch();
 //        stopWatch.start();
         Stream<String> quoteLines = getLines("quotes_2009-04.txt");
+//        quoteLines = getLines("quotes_2009-04.txt");
 
         Map<String, Long> wordFrequencyMap = quoteLines
-                .filter(line -> line.startsWith("Q") && line.matches(".*\\b(lipstick|steppe |boesch|antithesis)\\b.*"))
+                .filter(line -> line.startsWith("Q") && line.matches(".*\\b(lipstick|steppe|boesch|antithesis)\\b.*"))
                 .map(line -> line.split("\\s+"))
                 .collect(
                         Collectors.groupingBy(
@@ -72,8 +75,8 @@ public class Problem2Main {
                                         switch (word) {
                                             case "lipstick":
                                                 return "lipstick";
-                                            case "steppe ":
-                                                return "steppe ";
+                                            case "steppe":
+                                                return "steppe";
                                             case "boesch":
                                                 return "boesch";
                                             case "antithesis":
