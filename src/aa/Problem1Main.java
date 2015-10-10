@@ -55,11 +55,13 @@ public class Problem1Main {
                                 Collectors.counting()
                         ));
 
+        lines.close();
 
         System.out.println("=== a. The number of purchases by each buyer. ===");
         buyerNoOfPurchasesMap.forEach(
                 (key, value) -> System.out.println(key + " has made " + value + " trades (purchases)")
         );
+
 
         // just to leave a blank line
         System.out.println();
@@ -78,6 +80,8 @@ public class Problem1Main {
                         )
                 );
 
+        lines.close();
+
         System.out.println("=== b. The average price per fish ===");
         fishAvgPriceMap.forEach(
                 (key, value) -> System.out.println("Fish: " + key + " and its Average Price is " + value)
@@ -95,6 +99,8 @@ public class Problem1Main {
                                 Collectors.averagingDouble(line -> Double.parseDouble(line[NUMBER_OF_FISH_TRADED]))
                         )
                 );
+
+        lines.close();
 
         System.out.println("=== c. The average quantity per fish ===");
         avgQtyPerFishMap.forEach(
@@ -119,6 +125,13 @@ public class Problem1Main {
             }
 
         }
+
+        /*
+         * In the doc of Files.lines it says
+         * The returned stream encapsulates a Reader. If timely disposal of file system resources is required,
+         * the try-with-resources construct should be used to ensure that the stream's close method is invoked after the
+         * stream operations are completed.
+         */
 
         return lines;
     }

@@ -87,6 +87,11 @@ public class Problem2Main {
                         )
                 );
 
+        quoteLines.close();
+        wordFrequencyMap.forEach(
+                (key, value) -> System.out.println("Word: " + key + " and its Frequency Count is " + value)
+        );
+
         System.out.println();
 
 //        long timeTakenForPartA = stopWatch.stop();
@@ -105,8 +110,9 @@ public class Problem2Main {
         quoteLines = getLines("quotes_2009-04.txt");
 
         // y.txt is pretty small only 13841 entries, might as well get it in memory for frequent re-use.
+        Stream<String> yTxtLines = getLines("y.txt");
 
-        Set<String> yWordsSet = getLines("y.txt").collect(Collectors.toSet());
+        Set<String> yWordsSet = yTxtLines.collect(Collectors.toSet());
 
         Set<String> wordsNotInYTxt = quoteLines
                 .filter(line -> line.startsWith("Q"))
@@ -114,6 +120,9 @@ public class Problem2Main {
                 .flatMap(Arrays::stream)
                 .filter(word -> word.startsWith("y") && !yWordsSet.contains(word))
                 .collect(Collectors.toSet());
+
+        quoteLines.close();
+        yTxtLines.close();
 
         System.out.println("Words starting with “y” appear in the quote lines of the 10GB unzipped file which are not already listed in the y.txt file. are");
         wordsNotInYTxt.forEach(System.out::println);
@@ -133,6 +142,8 @@ public class Problem2Main {
                 .flatMap(Arrays::stream)
                 .distinct()
                 .count();
+
+        quoteLines.close();
 
         System.out.println("Total number of unique words are: " + uniqueWordsCount);
 
