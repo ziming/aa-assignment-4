@@ -104,7 +104,7 @@ public class Problem1Main {
 
     }
 
-    public static Stream<String> getCombinedStream() throws IOException {
+    private static Stream<String> getCombinedStream() throws IOException {
 
         Stream<String> lines = null;
 
