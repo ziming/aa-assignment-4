@@ -42,6 +42,26 @@ public class Problem1Main {
 
         // API docs: https://docs.oracle.com/javase/8/docs/api/
 
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        // === a. The number of purchases (trades) by each buyer. ===
+        partANumOfTradesGroupByBuyer();
+
+        // "=== b. The average price per fish ==="
+        partBAvgPriceGroupByFishPerTransaction();
+
+        // c. The average quantity per fish.
+        partCAvgQUantityGroupByFishPerTransaction();
+
+        long totalTimeTaken = stopWatch.stop();
+
+        // non parallel is about 19102
+        System.out.println("Total Time Taken (ms): " + totalTimeTaken);
+
+    }
+
+    private static void partANumOfTradesGroupByBuyer() throws IOException {
+
         // Get combined stream from fish0.dat to fish9.dat
         Stream<String> lines = getCombinedStream();
 
@@ -65,11 +85,10 @@ public class Problem1Main {
 
         // just to leave a blank line
         System.out.println();
+    }
 
-        // b. The average price per fish
-
-        // streams can only be used once so we get it again. this will be repeated
-        lines = getCombinedStream();
+    private static void partBAvgPriceGroupByFishPerTransaction() throws IOException {
+        Stream<String> lines = getCombinedStream();
 
         Map<String, Double> fishAvgPriceMap = lines
                 .map(line -> line.split(","))
@@ -89,8 +108,11 @@ public class Problem1Main {
 
         System.out.println();
 
-        // c. The average quantity per fish.
-        lines = getCombinedStream();
+    }
+
+    private static void partCAvgQUantityGroupByFishPerTransaction() throws IOException {
+
+        Stream<String> lines = getCombinedStream();
         Map<String, Double> avgQtyPerFishMap = lines
                 .map(line -> line.split(","))
                 .collect(
@@ -107,6 +129,7 @@ public class Problem1Main {
                 (key, value) -> System.out.println("Fish: " + key + " and its Average Quantity per transaction is " + value)
         );
 
+        System.out.println();
 
     }
 
@@ -135,7 +158,7 @@ public class Problem1Main {
          * So that means we must remember to call close() if we didn't use try-with
          */
 
-        return lines;
+        return lines.parallel();
     }
 
 }
