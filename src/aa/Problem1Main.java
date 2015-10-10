@@ -57,7 +57,7 @@ public class Problem1Main {
 
         lines.close();
 
-        System.out.println("=== a. The number of purchases by each buyer. ===");
+        System.out.println("=== a. The number of purchases (trades) by each buyer. ===");
         buyerNoOfPurchasesMap.forEach(
                 (key, value) -> System.out.println(key + " has made " + value + " trades (purchases)")
         );
@@ -84,7 +84,7 @@ public class Problem1Main {
 
         System.out.println("=== b. The average price per fish ===");
         fishAvgPriceMap.forEach(
-                (key, value) -> System.out.println("Fish: " + key + " and its Average Price is " + value)
+                (key, value) -> System.out.println("Fish: " + key + " and its Average Price per transaction is " + value)
         );
 
         System.out.println();
@@ -102,9 +102,9 @@ public class Problem1Main {
 
         lines.close();
 
-        System.out.println("=== c. The average quantity per fish ===");
+        System.out.println("=== c. The average quantity per fish per transaction ===");
         avgQtyPerFishMap.forEach(
-                (key, value) -> System.out.println("Fish: " + key + " and its Average Quantity is " + value)
+                (key, value) -> System.out.println("Fish: " + key + " and its Average Quantity per transaction is " + value)
         );
 
 
@@ -131,6 +131,8 @@ public class Problem1Main {
          * The returned stream encapsulates a Reader. If timely disposal of file system resources is required,
          * the try-with-resources construct should be used to ensure that the stream's close method is invoked after the
          * stream operations are completed.
+         *
+         * So that means we must remember to call close() if we didn't use try-with
          */
 
         return lines;
