@@ -102,7 +102,7 @@ public class Problem1Main {
 
         lines.close();
 
-        System.out.println("=== b. The average price per fish ===");
+        System.out.println("=== b. The average price by fish per transaction ===");
         fishAvgPriceMap.forEach(
                 (key, value) -> System.out.println("Fish: " + key + " and its Average Price per transaction is " + value)
         );
@@ -125,7 +125,7 @@ public class Problem1Main {
 
         lines.close();
 
-        System.out.println("=== c. The average quantity per fish per transaction ===");
+        System.out.println("=== c. The average quantity by fish per transaction ===");
         avgQtyPerFishMap.forEach(
                 (key, value) -> System.out.println("Fish: " + key + " and its Average Quantity per transaction is " + value)
         );
@@ -142,11 +142,7 @@ public class Problem1Main {
 
             Stream<String> currentFileLines = Files.lines(Paths.get(String.format("fish%d.dat", i)));
 
-            if (lines != null) {
-                lines = Stream.concat(lines, currentFileLines);
-            } else {
-                lines = currentFileLines;
-            }
+            lines = (lines != null) ? Stream.concat(lines, currentFileLines) : currentFileLines;
 
         }
 
@@ -156,7 +152,7 @@ public class Problem1Main {
          * the try-with-resources construct should be used to ensure that the stream's close method is invoked after the
          * stream operations are completed.
          *
-         * So that means we must remember to call close() if we didn't use try-with
+         * So that means we must remember to call close() if we didn't use try-with resources
          */
 
         return lines.parallel();
