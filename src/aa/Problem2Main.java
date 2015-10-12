@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -44,56 +43,36 @@ public class Problem2Main {
          L       http://voices.washingtonpost.com/thefix/2008/09/bristol_palin_is_pregnant.html?hpid=topnews
          */
 
-        // first let's analyse the data print first 250 lines maybe to get a sense of the format?
-//        Stream<String> quoteLines = getLines("quotes_2009-04.txt");
-//        quoteLines
-//                .filter(line -> line.contains("steppe "))
-//                .forEach(System.out::println);
-//        quoteLines.close();
-
         /*
          a. How many occurrences are there of each of the following words in the quote lines (those that start with “Q”)?
          - “lipstick”
-         - “steppe ” // Notice the space after steppe. Stepped would not count.
+         - “steppe”
          - “boesch”
          - “antithesis”
          */
-//        StopWatch stopWatch = new StopWatch();
-//        stopWatch.start();
-        Stream<String> quoteLines = getLines("quotes_2009-04.txt");
+
+        Stream<String> quoteLines; // = getLines("quotes_2009-04.txt");
 //        quoteLines = getLines("quotes_2009-04.txt");
 
-        Map<String, Long> wordFrequencyMap = quoteLines
-                .filter(line -> line.startsWith("Q") && line.matches(".*\\b(lipstick|steppe|boesch|antithesis)\\b.*"))
-                .map(line -> line.split("\\s+"))
-                .collect(
-                        Collectors.groupingBy(
-                                line -> {
 
-                                    for (String word : line) {
+         String[] wordArr = {"lipstick", "steppe", "boesch", "antithesis"};
 
-                                        switch (word) {
-                                            case "lipstick":
-                                                return "lipstick";
-                                            case "steppe":
-                                                return "steppe";
-                                            case "boesch":
-                                                return "boesch";
-                                            case "antithesis":
-                                                return "antithesis";
-                                        }
-                                    }
-                                    return "default";
+        for (String keyWord : wordArr) {
 
-                                },
-                            Collectors.counting()
-                        )
-                );
+            quoteLines = getLines("quotes_2009-04.txt");
 
-        quoteLines.close();
-        wordFrequencyMap.forEach(
-                (key, value) -> System.out.println("Word: " + key + " and its Frequency Count is " + value)
-        );
+            long wordFrequencyCount = quoteLines
+                    .filter( line -> line.startsWith("Q"))
+                    .map(line -> line.split("\\s+"))
+                    .flatMap(Arrays::stream)
+                    .filter(keyWord::equals)
+                    .count();
+
+            quoteLines.close();
+
+            System.out.println(keyWord + ": " + wordFrequencyCount);
+
+        }
 
         System.out.println();
 
@@ -141,6 +120,7 @@ public class Problem2Main {
 
         long uniqueWordsCount = quoteLines
                 .filter(line -> line.startsWith("Q"))
+                .map(String::toLowerCase)
                 .map(line -> line.split("\\s+"))
                 .flatMap(Arrays::stream)
                 .distinct()
@@ -155,6 +135,18 @@ public class Problem2Main {
     }
 
     private static Stream<String> getLines(String fileName) throws IOException {
+
+
+        /*
+         * In the doc of Files.lines it says
+         * The returned stream encapsulates a Reader. If timely disposal of file system resources is required,
+         * the try-with-resources construct should be used to ensure that the stream's close method is invoked after the
+         * stream operations are completed.
+         *
+         * So that means we must remember to call close() if we didn't use try-with resources
+         */
+
+        // no parallel for problem 2, it makes my laptop super noisy somehow!
         return Files.lines(Paths.get(fileName));
     }
 
